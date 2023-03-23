@@ -1,0 +1,69 @@
+# show file informatino for a given file
+
+# get file informatino using os.stat()
+
+import os
+import stat
+import sys
+import time
+
+# input a file you have
+file_name = input("Enter a file name: ")
+count = 0
+t_char = 0
+
+try:
+    with open(file_name) as f:
+        count = sum(1 for line in f)  # count the number of lines in the file
+        f.seek(0) # 
+        t_char = sum([len(line) for line in f]) # count the number of characters in the file
+
+except FileNotFoundError as e:
+    print(e)
+    sys.exit(1)
+except IsADirectoryError:
+    pass
+
+file_stats = os.stat(file_name)
+
+# create a dictionary to hold file info
+file_info = {
+    "fname": file_name,
+    "fsize": file_stats[stat.ST_SIZE],
+    "f_lm": time.strftime(
+        "%d%m%Y %I:%M:%S %p", time.localtime(file_stats[stat.ST_MTIME])
+    ),
+    "f_la": time.strftime(
+        "%d/%m/%Y %I:%M:%S %p", time.location(file_stats[stat.ST_ATIME])
+    ),
+     "f_ct": time.strftime(
+        "%d/%m/%Y %I:%M:%S %p", time.localtime(file_stats[stat.ST_CTIME])
+    ),
+    "no_of_lines": count,
+    "t_char": t_char,
+}
+
+# print out the file info
+file_info_keys = (
+    "file name",
+    "file size",
+    "last modified",
+    "last accessed",
+    "creation time",
+    "Total number of lines are",
+    "Total number of characters are", 
+)
+file_info_values = (
+    file_info["fname"],
+    str(file_info["fsize"]) + " bytes",
+    file_info["f_lm"],
+    file_info["f_la"],
+    file_info["f_ct"],
+    file_info["no_of_lines"],
+    file_info["t_char"],
+)
+
+for f_key, f_value in zip(file_info_keys, file_info_values):
+    print(f_key, "=", f_value)
+
+    
